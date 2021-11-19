@@ -39,7 +39,7 @@ public class Panel extends JPanel implements Runnable {
     }
 
     public void init(){        
-        triPoints = new float[12*1000000];
+        triPoints = new float[12*5000];
         cm = getCompatibleColorModel();
         width = getWidth();
         height = getHeight();
