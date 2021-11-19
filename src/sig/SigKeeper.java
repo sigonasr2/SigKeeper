@@ -1,5 +1,6 @@
 package sig;
 
+import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import java.awt.Cursor;
 import java.awt.event.MouseWheelListener;
@@ -13,7 +14,11 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.BorderLayout;
 import java.awt.image.BufferedImage;
+import java.awt.image.WritableRaster;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
@@ -32,8 +37,23 @@ public class SigKeeper implements WindowFocusListener,KeyListener,MouseListener,
     public static Cursor invisibleCursor;
 
     public static List<Triangle> tris = new ArrayList<Triangle>();
+    public static int[] texData = new int[256*256];
 
     SigKeeper() {
+
+        try {
+            BufferedImage img = ImageIO.read(new File("textures_256.png"));
+            WritableRaster r = img.getRaster();
+            for (int x=0;x<256;x++) {
+                for (int y=0;y<256;y++) {
+                    int[] pixel = r.getPixel(x,y,new int[4]);
+                    texData[x+y*256]=pixel[2]+(pixel[1]<<8)+(pixel[0]<<16)+(pixel[3]<<24);
+                }
+            }
+            
+        } catch (IOException e1) {
+            System.out.println("Could not load game textures! (textures_256.png not found)");
+        }
 
         frame = new JFrame("SigKeeper");
         panel = new Panel();
@@ -59,6 +79,8 @@ public class SigKeeper implements WindowFocusListener,KeyListener,MouseListener,
                 new Vertex((float)Math.random()*SCREEN_WIDTH,(float)Math.random()*SCREEN_HEIGHT,(float)Math.random()*100),
                 new Vertex((float)Math.random()*SCREEN_WIDTH,(float)Math.random()*SCREEN_HEIGHT,(float)Math.random()*100)));
         }
+        /*tris.add(new Triangle(new Vertex(50,300,100),new Vertex(300,300,100),new Vertex(50,100,100)));
+        tris.add(new Triangle(new Vertex(300,300,100),new Vertex(300,100,100),new Vertex(50,100,100)));*/
         for (int i=0;i<SigKeeper.tris.size();i++) {
             Triangle t = SigKeeper.tris.get(i);
             Panel.triPoints[i*12+0]=t.A.x;

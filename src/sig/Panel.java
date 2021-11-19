@@ -52,7 +52,7 @@ public class Panel extends JPanel implements Runnable {
         mImageProducer =  new MemoryImageSource(width, height, cm, pixel,0, width);
         mImageProducer.setAnimated(true);
         mImageProducer.setFullBufferUpdates(true);  
-        renderer = new RenderKernel(pixel,triPoints,SigKeeper.SCREEN_WIDTH,SigKeeper.SCREEN_HEIGHT);  
+        renderer = new RenderKernel(pixel,triPoints,SigKeeper.texData,SigKeeper.SCREEN_WIDTH,SigKeeper.SCREEN_HEIGHT,256,256);  
         renderer.setExplicit(true);
         imageBuffer = Toolkit.getDefaultToolkit().createImage(mImageProducer);    
         if(thread.isInterrupted() || !thread.isAlive()){

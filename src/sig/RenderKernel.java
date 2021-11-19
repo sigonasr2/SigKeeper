@@ -6,14 +6,18 @@ public class RenderKernel extends Kernel{
 
     int[] pixels;
     float[] tris;
-    int width;
-    int height;
+    int[] tex;
+    int width,tex_width;
+    int height,tex_height;
 
-    RenderKernel(int[] pixels,float[] tris,int width,int height) {
+    RenderKernel(int[] pixels,float[] tris,int[] tex,int width,int height,int tex_width,int tex_height) {
         this.pixels=pixels;
         this.tris=tris;
         this.width=width;
         this.height=height;
+        this.tex=tex;
+        this.tex_width=tex_width;
+        this.tex_height=tex_height;
     }
 
     @Override
@@ -25,7 +29,152 @@ public class RenderKernel extends Kernel{
         int y2=(int)tris[id*12+5];
         int x3=(int)tris[id*12+8];
         int y3=(int)tris[id*12+9];
-        FillTriangle(x1,y1,x2,y2,x3,y3,0xFF0000);
+        TexturedTriangle(
+            x1,y1,0f,0f,1f,
+            x2,y2,1f,0f,1f,
+            x3,y3,1f,1f,1f,
+            getGlobalId()%256,1f);
+    }
+
+    int getTextureColor(int tex_id,float u,float v,float colorMult) {
+        int x = (int)(u*16+(16*(tex_id%16)));
+        int y = (int)(v*16+(16*(tex_id/16)));
+        if (x<0||x>=256||y<0||y>=256) {
+            return 0;
+        } else {
+            int col = tex[x+y*tex_width];
+            if (colorMult==1f) {
+                return col;
+            } else
+            if (colorMult==0f) {
+                return 0;
+            } else {
+                return (int)(((col&0xFF)*colorMult)+((int)(((col&0xFF00)>>>8)*colorMult)<<8)+((int)(((col&0xFF0000)>>>16)*colorMult)<<16) + ((int)(((col&0xFF000000)>>>24))<<24));
+            }
+        }
+    }
+
+    void TexturedTriangle(int x1, int y1, float u1,float v1,float w1,
+            int x2, int y2, float u2,float v2,float w2,
+            int x3, int y3, float u3,float v3,float w3,
+            int tex_id, float colorMult
+    ) {
+		if (y2<y1) {int t=y1;y1=y2;y2=t;t=x1;x1=x2;x2=t;float u=u1;u1=u2;u2=u;float v=v1;v1=v2;v2=v;float w=w1;w1=w2;w2=w;}
+		if (y3<y1) {int t=y1;y1=y3;y3=t;t=x1;x1=x3;x3=t;float u=u1;u1=u3;u3=u;float v=v1;v1=v3;v3=v;float w=w1;w1=w3;w3=w;}
+		if (y3<y2) {int t=y2;y2=y3;y3=t;t=x2;x2=x3;x3=t;float u=u2;u2=u3;u3=u;float v=v2;v2=v3;v3=v;float w=w2;w2=w3;w3=w;}
+
+        int dy1=y2-y1;
+        int dx1=x2-x1;
+        float dv1=v2-v1;
+        float du1=u2-u1;
+        float dw1=w2-w1;
+        int dy2=y3-y1;
+        int dx2=x3-x1;
+        float dv2=v3-v1;
+        float du2=u3-u1;
+        float dw2=w3-w1;
+        float tex_u=0f,tex_v=0f,tex_w=0f;
+
+        float dax_step=0,dbx_step=0,
+            du1_step=0,dv1_step=0,dw1_step=0,
+            du2_step=0,dv2_step=0,dw2_step=0;
+
+        if (dy1!=0) {dax_step=dx1/((float)Math.abs(dy1));}
+        if (dy2!=0) {dbx_step=dx2/((float)Math.abs(dy2));}
+
+        if (dy1!=0) {du1_step=du1/((float)Math.abs(dy1));}
+        if (dy1!=0) {dv1_step=dv1/((float)Math.abs(dy1));}
+        if (dy1!=0) {dw1_step=dw1/((float)Math.abs(dy1));}
+        if (dy2!=0) {du2_step=du2/((float)Math.abs(dy2));}
+        if (dy2!=0) {dv2_step=dv2/((float)Math.abs(dy2));}
+        if (dy2!=0) {dw2_step=dw2/((float)Math.abs(dy2));}
+
+        if (dy1!=0) {
+            for (int i=y1;i<=y2;i++) {
+                int ax=(int)(x1+((float)(i-y1))*dax_step);
+                int bx=(int)(x1+((float)(i-y1))*dbx_step);
+
+                float tex_su=u1+((float)(i-y1))*du1_step;
+                float tex_sv=v1+((float)(i-y1))*dv1_step;
+                float tex_sw=w1+((float)(i-y1))*dw1_step;
+                float tex_eu=u1+((float)(i-y1))*du2_step;
+                float tex_ev=v1+((float)(i-y1))*dv2_step;
+                float tex_ew=w1+((float)(i-y1))*dw2_step;
+
+                if (ax>bx) {
+                    int t=ax;ax=bx;bx=t;
+                    float u=tex_su;tex_su=tex_eu;tex_eu=u;
+                    float v=tex_sv;tex_sv=tex_ev;tex_ev=v;
+                    float w=tex_sw;tex_sw=tex_ew;tex_ew=w;
+                }
+
+                tex_u=tex_su;
+                tex_v=tex_sv;
+                tex_w=tex_sw;
+
+                float tstep = 1.0f/(float)(bx-ax);
+                float t=0.0f;
+
+                for (int j=ax;j<=bx;j++) {
+                    tex_u=(1.0f-t)*tex_su+t*tex_eu;
+                    tex_v=(1.0f-t)*tex_sv+t*tex_ev;
+                    tex_w=(1.0f-t)*tex_sw+t*tex_ew;
+                    int col = getTextureColor(tex_id,tex_u/tex_w,tex_v/tex_w,colorMult);
+                    Draw(j,i,col);
+                    t+=tstep;
+                }
+            }
+        }
+
+        dy1=y3-y2;
+        dx1=x3-x2;
+        dv1=v3-v2;
+        du1=u3-u2;
+        dw1=w3-w2;
+        if (dy1!=0) {dax_step=dx1/((float)Math.abs(dy1));}
+        if (dy2!=0) {dbx_step=dx2/((float)Math.abs(dy2));}
+        du1_step=0f;
+        dv1_step=0f;
+        if (dy1!=0) {du1_step=du1/((float)Math.abs(dy1));}
+        if (dy1!=0) {dv1_step=dv1/((float)Math.abs(dy1));}
+        if (dy1!=0) {dw1_step=dw1/((float)Math.abs(dy1));}
+
+        if (dy1!=0) {
+            for (int i=y2;i<=y3;i++) {
+                int ax=(int)(x2+((float)(i-y2))*dax_step);
+                int bx=(int)(x1+((float)(i-y1))*dbx_step);
+
+                float tex_su=u2+((float)(i-y2))*du1_step;
+                float tex_sv=v2+((float)(i-y2))*dv1_step;
+                float tex_sw=w2+((float)(i-y2))*dw1_step;
+                float tex_eu=u1+((float)(i-y1))*du2_step;
+                float tex_ev=v1+((float)(i-y1))*dv2_step;
+                float tex_ew=w1+((float)(i-y1))*dw2_step;
+
+                if (ax>bx) {
+                    int t=ax;ax=bx;bx=t;
+                    float u=tex_su;tex_su=tex_eu;tex_eu=u;
+                    float v=tex_sv;tex_sv=tex_ev;tex_ev=v;
+                    float w=tex_sw;tex_sw=tex_ew;tex_ew=w;
+                }
+
+                tex_u=tex_su;
+                tex_v=tex_sv;
+                tex_w=tex_sw;
+
+                float tstep = 1.0f/(float)(bx-ax);
+                float t=0.0f;
+
+                for (int j=ax;j<=bx;j++) {
+                    tex_u=(1.0f-t)*tex_su+t*tex_eu;
+                    tex_v=(1.0f-t)*tex_sv+t*tex_ev;
+                    tex_w=(1.0f-t)*tex_sw+t*tex_ew;
+                    int col = getTextureColor(tex_id,tex_u/tex_w,tex_v/tex_w,colorMult);
+                    Draw(j,i,col);
+                    t+=tstep;
+                }
+            }
+        }
     }
 
     void DrawHorizontalLine(int sx,int ex,int ny,int col) {
