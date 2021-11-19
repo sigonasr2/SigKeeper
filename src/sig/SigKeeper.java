@@ -48,6 +48,16 @@ public class SigKeeper implements WindowFocusListener,KeyListener,MouseListener,
         GraphicsDevice screen = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
         frame.setLocation((screen.getDisplayMode().getWidth()-SCREEN_WIDTH)/2,(screen.getDisplayMode().getHeight()-SCREEN_HEIGHT)/2);
         panel.init();
+        for (int x=30;x<=100;x++) {
+            for (int y=30;y<=100;y++) {
+                if (y==30||y==100) {
+                    panel.pixel[y*SCREEN_WIDTH+x]=0xFF;
+                } else 
+                if (x==30||x==100){
+                    panel.pixel[y*SCREEN_WIDTH+x]=0xFF00;
+                }
+            }
+        }
 
         new Thread() {
             public void run(){
