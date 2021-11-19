@@ -13,6 +13,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.BorderLayout;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.List;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Point;
@@ -29,7 +31,10 @@ public class SigKeeper implements WindowFocusListener,KeyListener,MouseListener,
 
     public static Cursor invisibleCursor;
 
+    public static List<Triangle> tris = new ArrayList<Triangle>();
+
     SigKeeper() {
+
         frame = new JFrame("SigKeeper");
         panel = new Panel();
 
@@ -44,19 +49,15 @@ public class SigKeeper implements WindowFocusListener,KeyListener,MouseListener,
         invisibleCursor = frame.getToolkit().createCustomCursor(new BufferedImage(1,1,BufferedImage.TYPE_INT_ARGB),new Point(),null);
 
         panel.setCursor(invisibleCursor);
-        frame.setVisible(true);
         GraphicsDevice screen = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
         frame.setLocation((screen.getDisplayMode().getWidth()-SCREEN_WIDTH)/2,(screen.getDisplayMode().getHeight()-SCREEN_HEIGHT)/2);
+        frame.setVisible(true);
         panel.init();
-        for (int x=30;x<=100;x++) {
-            for (int y=30;y<=100;y++) {
-                if (y==30||y==100) {
-                    panel.pixel[y*SCREEN_WIDTH+x]=0xFF;
-                } else 
-                if (x==30||x==100){
-                    panel.pixel[y*SCREEN_WIDTH+x]=0xFF00;
-                }
-            }
+
+        for (int i=0;i<1000000;i++) {
+            tris.add(new Triangle(new Vertex((float)Math.random()*SCREEN_WIDTH,(float)Math.random()*SCREEN_HEIGHT,(float)Math.random()*100),
+                new Vertex((float)Math.random()*SCREEN_WIDTH,(float)Math.random()*SCREEN_HEIGHT,(float)Math.random()*100),
+                new Vertex((float)Math.random()*SCREEN_WIDTH,(float)Math.random()*SCREEN_HEIGHT,(float)Math.random()*100)));
         }
 
         new Thread() {
