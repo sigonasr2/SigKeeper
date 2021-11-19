@@ -19,12 +19,6 @@ public class RenderKernel extends Kernel{
     @Override
     public void run() {
         int id = getGlobalId();
-        tris[id*12+0]+=1;
-        tris[id*12+1]+=1;
-        tris[id*12+4]-=1;
-        tris[id*12+5]+=1;
-        tris[id*12+8]+=1;
-        tris[id*12+9]-=1;
         int x1=(int)tris[id*12+0];
         int y1=(int)tris[id*12+1];
         int x2=(int)tris[id*12+4];

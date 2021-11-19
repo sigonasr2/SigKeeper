@@ -54,10 +54,25 @@ public class SigKeeper implements WindowFocusListener,KeyListener,MouseListener,
         frame.setVisible(true);
         panel.init();
 
-        for (int i=0;i<1000000;i++) {
+        for (int i=0;i<Panel.triPoints.length/12;i++) {
             tris.add(new Triangle(new Vertex((float)Math.random()*SCREEN_WIDTH,(float)Math.random()*SCREEN_HEIGHT,(float)Math.random()*100),
                 new Vertex((float)Math.random()*SCREEN_WIDTH,(float)Math.random()*SCREEN_HEIGHT,(float)Math.random()*100),
                 new Vertex((float)Math.random()*SCREEN_WIDTH,(float)Math.random()*SCREEN_HEIGHT,(float)Math.random()*100)));
+        }
+        for (int i=0;i<SigKeeper.tris.size();i++) {
+            Triangle t = SigKeeper.tris.get(i);
+            Panel.triPoints[i*12+0]=t.A.x;
+            Panel.triPoints[i*12+1]=t.A.y;
+            Panel.triPoints[i*12+2]=t.A.z;
+            Panel.triPoints[i*12+3]=t.A.w;
+            Panel.triPoints[i*12+4]=t.B.x;
+            Panel.triPoints[i*12+5]=t.B.y;
+            Panel.triPoints[i*12+6]=t.B.z;
+            Panel.triPoints[i*12+7]=t.B.w;
+            Panel.triPoints[i*12+8]=t.C.x;
+            Panel.triPoints[i*12+9]=t.C.y;
+            Panel.triPoints[i*12+10]=t.C.z;
+            Panel.triPoints[i*12+11]=t.C.w;
         }
 
         new Thread() {
@@ -114,8 +129,14 @@ public class SigKeeper implements WindowFocusListener,KeyListener,MouseListener,
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        // TODO Auto-generated method stub
-        
+        for (int i=0;i<tris.size();i++) {
+            Panel.triPoints[i*12+0]+=1;
+            Panel.triPoints[i*12+1]+=1;
+            Panel.triPoints[i*12+4]-=1;
+            Panel.triPoints[i*12+5]+=1;
+            Panel.triPoints[i*12+8]+=1;
+            Panel.triPoints[i*12+9]-=1;
+        }
     }
 
     @Override

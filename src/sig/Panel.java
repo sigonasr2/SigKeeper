@@ -22,7 +22,7 @@ public class Panel extends JPanel implements Runnable {
     private Image imageBuffer;   
     private MemoryImageSource mImageProducer;   
     public int[] pixel;
-    public float[] triPoints;
+    public static float[] triPoints;
 
     RenderKernel renderer;
 
@@ -39,7 +39,7 @@ public class Panel extends JPanel implements Runnable {
     }
 
     public void init(){        
-        triPoints = new float[120000000];
+        triPoints = new float[12*1000000];
         cm = getCompatibleColorModel();
         width = getWidth();
         height = getHeight();
@@ -63,31 +63,16 @@ public class Panel extends JPanel implements Runnable {
     }
     public /* abstract */ void render(){
         int[] p = pixel; // this avoid crash when resizing
-        if(p!=null && p.length != width * height) return;      
+        if(p==null || p.length != width * height) return;      
         for (int x=0;x<SigKeeper.SCREEN_WIDTH;x++) {
             for (int y=0;y<SigKeeper.SCREEN_HEIGHT;y++) {
                 pixel[y*SigKeeper.SCREEN_WIDTH+x]=0;
             }
         }
         //a=h/w
-        for (int i=0;i<SigKeeper.tris.size();i++) {
-            Triangle t = SigKeeper.tris.get(i);
-            triPoints[i*12+0]=t.A.x;
-            triPoints[i*12+1]=t.A.y;
-            triPoints[i*12+2]=t.A.z;
-            triPoints[i*12+3]=t.A.w;
-            triPoints[i*12+4]=t.B.x;
-            triPoints[i*12+5]=t.B.y;
-            triPoints[i*12+6]=t.B.z;
-            triPoints[i*12+7]=t.B.w;
-            triPoints[i*12+8]=t.C.x;
-            triPoints[i*12+9]=t.C.y;
-            triPoints[i*12+10]=t.C.z;
-            triPoints[i*12+11]=t.C.w;
-        }
         //renderer.put(triPoints);
-        if (renderer!=null) {
-            renderer.execute(Range.create(1000000));
+        if (renderer!=null&&SigKeeper.tris.size()>0) {
+            renderer.execute(Range.create(SigKeeper.tris.size()));
         }
     }
 
