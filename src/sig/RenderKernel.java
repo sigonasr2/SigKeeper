@@ -23,16 +23,31 @@ public class RenderKernel extends Kernel{
     @Override
     public void run() {
         int id = getGlobalId();
-        int x1=(int)tris[id*12+0];
-        int y1=(int)tris[id*12+1];
-        int x2=(int)tris[id*12+4];
-        int y2=(int)tris[id*12+5];
-        int x3=(int)tris[id*12+8];
-        int y3=(int)tris[id*12+9];
+        float x1=tris[id*21+0];
+        float y1=tris[id*21+1];
+        float z1=tris[id*21+2];
+        float w1=tris[id*21+3];
+        float x2=tris[id*21+4];
+        float y2=tris[id*21+5];
+        float z2=tris[id*21+6];
+        float w2=tris[id*21+7];
+        float x3=tris[id*21+8];
+        float y3=tris[id*21+9];
+        float z3=tris[id*21+10];
+        float w3=tris[id*21+11];
+        float Tu1=tris[id*21+12];
+        float Tv1=tris[id*21+13];
+        float Tw1=tris[id*21+14];
+        float Uu2=tris[id*21+15];
+        float Uv2=tris[id*21+16];
+        float Uw2=tris[id*21+17];
+        float Vu3=tris[id*21+18];
+        float Vv3=tris[id*21+19];
+        float Vw3=tris[id*21+20];
         TexturedTriangle(
-            x1,y1,0f,0f,1f,
-            x2,y2,1f,0f,1f,
-            x3,y3,1f,1f,1f,
+            (int)x1,(int)y1,0f,0f,1f,
+            (int)x2,(int)y2,1f,0f,1f,
+            (int)x3,(int)y3,1f,1f,1f,
             getGlobalId()%256,1f);
     }
 

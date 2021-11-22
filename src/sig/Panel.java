@@ -38,8 +38,8 @@ public class Panel extends JPanel implements Runnable {
         return gfx_config.getColorModel();
     }
 
-    public void init(){        
-        triPoints = new float[12*5000];
+    public void init(){
+        triPoints = new float[21*1];
         cm = getCompatibleColorModel();
         width = getWidth();
         height = getHeight();

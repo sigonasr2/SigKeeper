@@ -1,17 +1,17 @@
 package sig;
 
-public class Vertex {
+public class Vector {
     float x,y,z,w;
 
-    public Vertex() {
+    public Vector() {
         this(0,0,0,1);
     }
 
-    public Vertex(float x, float y, float z) {
+    public Vector(float x, float y, float z) {
         this(x,y,z,1);
     }
 
-    public Vertex(float x, float y, float z,float w) {
+    public Vector(float x, float y, float z,float w) {
         this.x = x;
         this.y = y;
         this.z = z;
