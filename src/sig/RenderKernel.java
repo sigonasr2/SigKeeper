@@ -6,11 +6,13 @@ public class RenderKernel extends Kernel{
 
     int[] pixels;
     float[] tris;
+    float[] transformedTris;
+    float[] depthBuffer;
     int[] tex;
     int width,tex_width;
     int height,tex_height;
 
-    RenderKernel(int[] pixels,float[] tris,int[] tex,int width,int height,int tex_width,int tex_height) {
+    RenderKernel(int[] pixels,float[] tris,int[] tex,int width,int height,int tex_width,int tex_height,float[] depthBuffer) {
         this.pixels=pixels;
         this.tris=tris;
         this.width=width;
@@ -18,36 +20,41 @@ public class RenderKernel extends Kernel{
         this.tex=tex;
         this.tex_width=tex_width;
         this.tex_height=tex_height;
+        this.depthBuffer=depthBuffer;
+        this.transformedTris = new float[this.tris.length];
     }
 
     @Override
     public void run() {
+        for (int i=0;i<tris.length;i++) {
+            transformedTris[i]=tris[i];
+        }
         int id = getGlobalId();
-        float x1=tris[id*21+0];
-        float y1=tris[id*21+1];
-        float z1=tris[id*21+2];
-        float w1=tris[id*21+3];
-        float x2=tris[id*21+4];
-        float y2=tris[id*21+5];
-        float z2=tris[id*21+6];
-        float w2=tris[id*21+7];
-        float x3=tris[id*21+8];
-        float y3=tris[id*21+9];
-        float z3=tris[id*21+10];
-        float w3=tris[id*21+11];
-        float Tu1=tris[id*21+12];
-        float Tv1=tris[id*21+13];
-        float Tw1=tris[id*21+14];
-        float Uu2=tris[id*21+15];
-        float Uv2=tris[id*21+16];
-        float Uw2=tris[id*21+17];
-        float Vu3=tris[id*21+18];
-        float Vv3=tris[id*21+19];
-        float Vw3=tris[id*21+20];
+        float x1=transformedTris[id*21+0];
+        float y1=transformedTris[id*21+1];
+        float z1=transformedTris[id*21+2];
+        float w1=transformedTris[id*21+3];
+        float x2=transformedTris[id*21+4];
+        float y2=transformedTris[id*21+5];
+        float z2=transformedTris[id*21+6];
+        float w2=transformedTris[id*21+7];
+        float x3=transformedTris[id*21+8];
+        float y3=transformedTris[id*21+9];
+        float z3=transformedTris[id*21+10];
+        float w3=transformedTris[id*21+11];
+        float Tu=transformedTris[id*21+12];
+        float Tv=transformedTris[id*21+13];
+        float Tw=transformedTris[id*21+14];
+        float Uu=transformedTris[id*21+15];
+        float Uv=transformedTris[id*21+16];
+        float Uw=transformedTris[id*21+17];
+        float Vu=transformedTris[id*21+18];
+        float Vv=transformedTris[id*21+19];
+        float Vw=transformedTris[id*21+20];
         TexturedTriangle(
-            (int)x1,(int)y1,0f,0f,1f,
-            (int)x2,(int)y2,1f,0f,1f,
-            (int)x3,(int)y3,1f,1f,1f,
+            (int)x1,(int)y1,Tu,Tv,Tw,
+            (int)x2,(int)y2,Uu,Uv,Uw,
+            (int)x3,(int)y3,Vu,Vv,Vw,
             getGlobalId()%256,1f);
     }
 

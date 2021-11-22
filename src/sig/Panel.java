@@ -21,7 +21,8 @@ public class Panel extends JPanel implements Runnable {
     public int height=SigKeeper.SCREEN_HEIGHT;
     private Image imageBuffer;   
     private MemoryImageSource mImageProducer;   
-    public int[] pixel;
+    public static int[] pixel; 
+    public static float[] depthBuffer;
     public static float[] triPoints;
 
     RenderKernel renderer;
@@ -39,7 +40,7 @@ public class Panel extends JPanel implements Runnable {
     }
 
     public void init(){
-        triPoints = new float[21*1];
+        triPoints = new float[21*SigKeeper.MAX_TRIANGLE_COUNT];
         cm = getCompatibleColorModel();
         width = getWidth();
         height = getHeight();
@@ -48,11 +49,12 @@ public class Panel extends JPanel implements Runnable {
         int screenSize = width * height;
         if(pixel == null || pixel.length < screenSize){
             pixel = new int[screenSize];   
+            depthBuffer = new float[screenSize];
         }        
         mImageProducer =  new MemoryImageSource(width, height, cm, pixel,0, width);
         mImageProducer.setAnimated(true);
         mImageProducer.setFullBufferUpdates(true);  
-        renderer = new RenderKernel(pixel,triPoints,SigKeeper.texData,SigKeeper.SCREEN_WIDTH,SigKeeper.SCREEN_HEIGHT,256,256);  
+        renderer = new RenderKernel(pixel,triPoints,SigKeeper.texData,SigKeeper.SCREEN_WIDTH,SigKeeper.SCREEN_HEIGHT,256,256,depthBuffer);  
         renderer.setExplicit(true);
         imageBuffer = Toolkit.getDefaultToolkit().createImage(mImageProducer);    
         if(thread.isInterrupted() || !thread.isAlive()){
@@ -67,6 +69,7 @@ public class Panel extends JPanel implements Runnable {
         for (int x=0;x<SigKeeper.SCREEN_WIDTH;x++) {
             for (int y=0;y<SigKeeper.SCREEN_HEIGHT;y++) {
                 pixel[y*SigKeeper.SCREEN_WIDTH+x]=0;
+                depthBuffer[y*SigKeeper.SCREEN_WIDTH+x]=0;
             }
         }
         //a=h/w

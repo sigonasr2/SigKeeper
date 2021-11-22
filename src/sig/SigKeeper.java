@@ -33,6 +33,7 @@ public class SigKeeper implements WindowFocusListener,KeyListener,MouseListener,
     public final static long TIMEPERTICK = 16666667l;
     public static float DRAWTIME=0;
     public static float DRAWLOOPTIME=0;
+    public static int MAX_TRIANGLE_COUNT=100;
 
     public static Cursor invisibleCursor;
 
