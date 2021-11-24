@@ -12,11 +12,10 @@ import java.awt.Image;
 import java.awt.image.MemoryImageSource;
 import java.awt.Toolkit;
 
-public class Panel extends JPanel implements Runnable {
+public class Panel extends JPanel{
     long startTime = System.nanoTime();
     long endTime = System.nanoTime();
     private ColorModel cm;    
-    private Thread thread;
     public int width=SigKeeper.SCREEN_WIDTH;
     public int height=SigKeeper.SCREEN_HEIGHT;
     private Image imageBuffer;   
@@ -29,7 +28,6 @@ public class Panel extends JPanel implements Runnable {
 
     public Panel() {
         super(true);
-        thread = new Thread(this, "Panel Thread");
     }
 
     protected static ColorModel getCompatibleColorModel(){        
@@ -40,7 +38,7 @@ public class Panel extends JPanel implements Runnable {
     }
 
     public void init(){
-        triPoints = new float[21*SigKeeper.MAX_TRIANGLE_COUNT];
+        triPoints = new float[22*SigKeeper.MAX_TRIANGLE_COUNT];
         cm = getCompatibleColorModel();
         width = getWidth();
         height = getHeight();
@@ -57,9 +55,6 @@ public class Panel extends JPanel implements Runnable {
         renderer = new RenderKernel(pixel,triPoints,SigKeeper.texData,SigKeeper.SCREEN_WIDTH,SigKeeper.SCREEN_HEIGHT,256,256,depthBuffer);  
         renderer.setExplicit(true);
         imageBuffer = Toolkit.getDefaultToolkit().createImage(mImageProducer);    
-        if(thread.isInterrupted() || !thread.isAlive()){
-            thread.start();
-        }
         //renderer.setExplicit(true);
         //renderer.put(pixel);
     }
@@ -104,13 +99,5 @@ public class Panel extends JPanel implements Runnable {
     @Override
     public boolean imageUpdate(Image image, int a, int b, int c, int d, int e) {
         return true;
-    }
-    @Override
-    public void run() {
-        while (true) {
-            // request a JPanel re-drawing
-            repaint();                                  
-            try {Thread.sleep(5);} catch (InterruptedException e) {}
-        }
     }
 }

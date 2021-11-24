@@ -30,32 +30,33 @@ public class RenderKernel extends Kernel{
             transformedTris[i]=tris[i];
         }
         int id = getGlobalId();
-        float x1=transformedTris[id*21+0];
-        float y1=transformedTris[id*21+1];
-        float z1=transformedTris[id*21+2];
-        float w1=transformedTris[id*21+3];
-        float x2=transformedTris[id*21+4];
-        float y2=transformedTris[id*21+5];
-        float z2=transformedTris[id*21+6];
-        float w2=transformedTris[id*21+7];
-        float x3=transformedTris[id*21+8];
-        float y3=transformedTris[id*21+9];
-        float z3=transformedTris[id*21+10];
-        float w3=transformedTris[id*21+11];
-        float Tu=transformedTris[id*21+12];
-        float Tv=transformedTris[id*21+13];
-        float Tw=transformedTris[id*21+14];
-        float Uu=transformedTris[id*21+15];
-        float Uv=transformedTris[id*21+16];
-        float Uw=transformedTris[id*21+17];
-        float Vu=transformedTris[id*21+18];
-        float Vv=transformedTris[id*21+19];
-        float Vw=transformedTris[id*21+20];
+        float x1=transformedTris[id*22+0];
+        float y1=transformedTris[id*22+1];
+        float z1=transformedTris[id*22+2];
+        float w1=transformedTris[id*22+3];
+        float x2=transformedTris[id*22+4];
+        float y2=transformedTris[id*22+5];
+        float z2=transformedTris[id*22+6];
+        float w2=transformedTris[id*22+7];
+        float x3=transformedTris[id*22+8];
+        float y3=transformedTris[id*22+9];
+        float z3=transformedTris[id*22+10];
+        float w3=transformedTris[id*22+11];
+        float Tu=transformedTris[id*22+12];
+        float Tv=transformedTris[id*22+13];
+        float Tw=transformedTris[id*22+14];
+        float Uu=transformedTris[id*22+15];
+        float Uv=transformedTris[id*22+16];
+        float Uw=transformedTris[id*22+17];
+        float Vu=transformedTris[id*22+18];
+        float Vv=transformedTris[id*22+19];
+        float Vw=transformedTris[id*22+20];
+        int tex=(int)transformedTris[id*22+21];
         TexturedTriangle(
             (int)x1,(int)y1,Tu,Tv,Tw,
             (int)x2,(int)y2,Uu,Uv,Uw,
             (int)x3,(int)y3,Vu,Vv,Vw,
-            getGlobalId()%256,1f);
+            tex,1f);
     }
 
     int getTextureColor(int tex_id,float u,float v,float colorMult) {
